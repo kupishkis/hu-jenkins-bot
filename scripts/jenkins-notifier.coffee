@@ -75,7 +75,7 @@ updateTopicForAllBuilds = (robot, room) ->
 	
 	for dataName, dataInfo of statusCache
 		if topic != ""
-			topic += " | "
+			topic = " | " + topic
 			
 		topicPrefix = ""
 		if dataInfo.latestStatus?
@@ -84,7 +84,7 @@ updateTopicForAllBuilds = (robot, room) ->
 				topicPrefix += " (BUILDING)"
 		else
 			topicPrefix += "BUILDING"
-		topic += topicPrefix + ": " + topicBuildDescription dataInfo.data
+		topic = topicPrefix + ": " + (topicBuildDescription dataInfo.data) + topic
 	
 	if topic != lastTopic
 	  robot.adapter.topic room, topic
