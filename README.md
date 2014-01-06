@@ -23,4 +23,5 @@ You'll see some start up output and hubot will try to connect to the specified h
 There are several modified scripts in /scripts directory.
 
 The `jenkins.coffee` script is slightly modified to remove %20 from chat messages.
+
 The `jenkins-notifier.coffee` is basically rewritten from scratch. It listens to jenkins notifications (configured over jenkins notifications plugin) and sends information about build status to hipchat, changes the room topic with current build status. In case a build is failing or is unstable, it also sends detailed blame message with the name list :)
