@@ -1,2 +1,4 @@
+*.esproj
+bin/hubot-local
 node_modules
 .DS_Store*
