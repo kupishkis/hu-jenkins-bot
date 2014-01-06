@@ -73,9 +73,13 @@ addStatusToCache = (data) ->
 updateTopicForAllBuilds = (robot, room) ->
 	topic = ""
 	
-	for dataName, dataInfo of statusCache
+	keys = (k for k of statusCache).sort (a, b) -> a > b ? 1 : -1
+	
+	for dataName in keys
+		dataInfo = statusCache[dataName]
+	
 		if topic != ""
-			topic = " | " + topic
+			topic += " | "
 			
 		topicPrefix = ""
 		if dataInfo.latestStatus?
@@ -84,7 +88,7 @@ updateTopicForAllBuilds = (robot, room) ->
 				topicPrefix += " (BUILDING)"
 		else
 			topicPrefix += "BUILDING"
-		topic = topicPrefix + ": " + (topicBuildDescription dataInfo.data) + topic
+		topic += topicPrefix + ": " + (topicBuildDescription dataInfo.data)
 	
 	if topic != lastTopic
 	  robot.adapter.topic room, topic
@@ -112,6 +116,8 @@ module.exports = (robot) ->
 
       addStatusToCache data
       updateTopicForAllBuilds robot, query.room
+
+      return
 
       if data.build.phase == 'FINISHED'
         if data.build.status == 'FAILURE' or data.build.status == 'UNSTABLE'
