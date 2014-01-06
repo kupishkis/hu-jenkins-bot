@@ -70,29 +70,52 @@ addStatusToCache = (data) ->
 	if data.build.phase == 'FINISHED'
 		statusCache[data.name].latestStatus = data.build.status
 
-updateTopicForAllBuilds = (robot, room) ->
-	topic = ""
+# prevent topic change spam if many updates during short interval
+delayedUpdatesPending = 0
+defaultDelayWindow = 5000
+
+delayedUpdateTopicForAllBuilds = (robot, room) ->
 	
-	keys = (k for k of statusCache).sort (a, b) -> a > b ? 1 : -1
+	delayedUpdatesPending -= 1
 	
-	for dataName in keys
-		dataInfo = statusCache[dataName]
-	
-		if topic != ""
-			topic += " | "
+	if delayedUpdatesPending == 0
+
+		topic = ""
+		
+		keys = (k for k of statusCache).sort (a, b) -> a > b ? 1 : -1
+		
+		for dataName in keys
+			dataInfo = statusCache[dataName]
+		
+			if topic != ""
+				topic += " | "
+				
+			topicPrefix = ""
+			if dataInfo.latestStatus?
 			
-		topicPrefix = ""
-		if dataInfo.latestStatus?
-			topicPrefix += dataInfo.latestStatus
-			if dataInfo.data.build.phase == 'STARTED'
-				topicPrefix += " (BUILDING)"
-		else
-			topicPrefix += "BUILDING"
-		topic += topicPrefix + ": " + (topicBuildDescription dataInfo.data)
-	
-	if topic != lastTopic
-	  robot.adapter.topic room, topic
-	  lastTopic = topic
+				if dataInfo.latestStatus == 'SUCCESS'
+					statusName = 'STABLE'
+				else if dataInfo.latestStatus == 'FAILURE'
+					statusName = 'FAILING'
+				else
+					statusName = dataInfo.latestStatus
+				    
+				topicPrefix += statusName
+				if dataInfo.data.build.phase == 'STARTED'
+					topicPrefix += " (BUILDING)"
+			else
+				topicPrefix += "BUILDING"
+			topic += topicPrefix + ": " + (topicBuildDescription dataInfo.data)
+		
+		if topic != lastTopic
+		  console.log topic
+		  #robot.adapter.topic room, topic
+		  lastTopic = topic
+	  
+updateTopicForAllBuilds = (robot, room) ->
+	callback = -> delayedUpdateTopicForAllBuilds robot, room
+	delayedUpdatesPending += 1
+	setTimeout callback, defaultDelayWindow
 
 module.exports = (robot) ->
 
@@ -116,8 +139,6 @@ module.exports = (robot) ->
 
       addStatusToCache data
       updateTopicForAllBuilds robot, query.room
-
-      return
 
       if data.build.phase == 'FINISHED'
         if data.build.status == 'FAILURE' or data.build.status == 'UNSTABLE'
