@@ -12,7 +12,7 @@ module.exports = (robot) ->
     msg.send "NO PONG FOR YOU."
 	
   robot.respond /SAY.(.*)$/i, (msg) ->
-    msg.send msg.match[1]
+    msg.reply msg.match[1]
 
   robot.respond /ECHO (.*)$/i, (msg) ->
     msg.send msg.match[1]
