@@ -108,8 +108,8 @@ delayedUpdateTopicForAllBuilds = (robot, room) ->
 			topic += topicPrefix + ": " + (topicBuildDescription dataInfo.data)
 		
 		if topic != lastTopic
-		  console.log topic
-		  #robot.adapter.topic room, topic
+		  #console.log topic
+		  robot.adapter.topic room, topic
 		  lastTopic = topic
 	  
 updateTopicForAllBuilds = (robot, room) ->

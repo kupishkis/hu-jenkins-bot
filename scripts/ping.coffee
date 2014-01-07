@@ -12,7 +12,10 @@ module.exports = (robot) ->
     msg.send "NO PONG FOR YOU."
 	
   robot.respond /SAY.(.*)$/i, (msg) ->
-    msg.send msg.match[1]
+    msg.reply msg.match[1]
+    
+  robot.respond /PLEASE.BE.(.*)$/i, (msg) ->
+    msg.send "I am " + msg.match[1]
 
   robot.respond /ECHO (.*)$/i, (msg) ->
     msg.send msg.match[1]
@@ -21,6 +24,6 @@ module.exports = (robot) ->
     msg.send "Server time is: #{new Date()}"
 
   robot.respond /DIE$/i, (msg) ->
-    msg.send "Goodbye, cruel world."
+    msg.reply "I will remember this."
     process.exit 0
 
