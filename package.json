@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "hubot": "2.6.5",
-    "hubot-scripts": "2.6.5",
+    "hubot-scripts": ">= 2.6.0, < 3.0.0",
     "hubot-hipchat": "2.6.4"
   },
   "engines": {
