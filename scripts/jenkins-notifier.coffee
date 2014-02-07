@@ -25,18 +25,9 @@
 #   nercury (multiple builds, topic change)
 
 url = require('url')
-dns = require('dns')
 querystring = require('querystring')
 statusCache = {}
 lastTopic = ""
-
-jenkinsServer = url.parse process.env.HUBOT_JENKINS_URL
-jenkinsIp = false
-
-# store jenkins ip address if it can be resolved
-dns.lookup jenkinsServer.hostname, 4, (err, address, family) ->
-  if not err
-    jenkinsIp = address
 
 parseUser = (query) ->
   user = {}
@@ -46,9 +37,6 @@ parseUser = (query) ->
 
 chatBuildDescription = (data) ->
   full_url = data.build.full_url
-  # replace ip in url with jenkins domain name if address is resolved
-  if jenkinsIp
-    full_url = full_url.replace(jenkinsIp, jenkinsServer.hostname)
   console_link = "#{full_url}console"
   return "#{data.name} ##{data.build.number} (#{full_url})\n (#{console_link})"
 
